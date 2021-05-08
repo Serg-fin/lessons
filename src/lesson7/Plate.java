@@ -11,8 +11,9 @@ public class Plate {
         System.out.println("plate: " + food);
     }
 
-    public void decreaseFood(int amount) { // метод поедания еды
-        food -= amount;
+    public void decreaseFood(int appetite) { // метод поедания еды (уменьшает количество еды)
+
+        food -= appetite;
     }
 
     public int getFood() {
@@ -20,6 +21,14 @@ public class Plate {
     }
 
     public void setFood(int food) {
+
         this.food = food;
+    }
+    public void addFood(int foodCount) { // метод добавления еды в тарелку
+        this.food = foodCount;
+    }
+
+    public boolean isFoodEnough(int foodCount) {
+        return getFood() >= foodCount;
     }
 }
