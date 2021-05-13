@@ -99,8 +99,6 @@ public class CounterAdd extends JFrame {
             }
         });
 
-//        JOptionPane.showMessageDialog(CounterAdd.this, "Введите число");
-
         setVisible(true);
     }
 
