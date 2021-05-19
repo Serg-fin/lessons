@@ -1,46 +1,153 @@
 package lesson8;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
-import java.util.Scanner;
+
 
 public class TicTacToeVisual {
 
-    private static final int SIZE = 3;
-    private static final int DOTS_TO_WIN = 3;
-
+    private static final int SIZE = 5;
+    private static final int DOTS_TO_WIN = 4;
     private static final char DOT_EMPTY = '∙';
     private static final char DOT_X = 'X';
     private static final char DOT_O = 'O';
+    private static final String FRAME_TITLE = "Крестики-Нолики"; // задаем название окна
+    private static final String START_GAME_MSG = "Игра началаcь!"; // передаем пользователю сообщение при запуске программы
+    public static char[][] map = new char[SIZE][SIZE];
 
-    private static char[][] map = new char[SIZE][SIZE];
 
-    public static void main(String[] args) {
-        initMap();
-        printMap();
+    private final JLabel[][] gameField = new JLabel[SIZE][SIZE]; // создаем игровое поле (размеры задаем через константу SIZE)
 
-        while (true) {
-            humanTurn();
-            printMap();
-            if (isWin(DOT_X)) {
-                System.out.println("Человек победил!");
-                break;
+    private JLabel gameStateLabel;
+    private JPanel gamePanel;
+    private JFrame frame;
+
+    public TicTacToeVisual() {
+        initFrame();
+        frame.setVisible(true);
+    }
+
+    private void initFrame() { // инициализируем рамку
+        frame = new JFrame();
+        frame.setTitle(FRAME_TITLE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setSize(400, 400);
+
+        gameStateLabel = new JLabel(START_GAME_MSG);
+        gameStateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        frame.add(gameStateLabel, BorderLayout.NORTH);
+
+        JButton restartGameButton = new JButton("Начать заново");
+        restartGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                startGame();
             }
-            if (isMapFull()) {
-                System.out.println("Ничья!");
-                break;
-            }
-            computerTern();
-            printMap();
-            if (isWin(DOT_O)) {
-                System.out.println("Компьютер победил!");
-                break;
-            }
-            if (isMapFull()) {
-                System.out.println("Ничья!");
-                break;
+        });
+
+        frame.add(restartGameButton, BorderLayout.SOUTH);
+
+        gamePanel = new JPanel();
+        gamePanel.setLayout(new GridLayout(SIZE, SIZE));
+        initCells(gamePanel); // инициализируем ячейки
+        frame.add(gamePanel, BorderLayout.CENTER);
+    }
+
+    private void initCells(JPanel gamePanel) {
+        Font font = new Font("Arial", Font.BOLD, 50);
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                JLabel cell = new JLabel(String.valueOf(DOT_EMPTY));
+                cell.setHorizontalAlignment(SwingConstants.CENTER);
+                cell.setVerticalAlignment(SwingConstants.CENTER);
+                cell.setFont(font);
+                cell.setBorder(BorderFactory.createLineBorder(Color.blue));
+
+                final int rowIndex = i;
+                final int colIndex = j;
+                cell.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (!cell.isEnabled()) {
+                            return;
+                        }
+
+                        setCell(rowIndex, colIndex, DOT_X);
+                        makeTurn(DOT_X, cell);
+
+                        if (checkEndGameState(DOT_X, "Человек")) {
+                            return;
+                        }
+
+                        int[] computerCellIndex = computerTurn();
+                        JLabel computerCell = gameField[computerCellIndex[0]][computerCellIndex[1]];
+                        makeTurn(DOT_O, computerCell);
+
+                        checkEndGameState(DOT_O, "Компьютер");
+                    }
+                });
+
+                gamePanel.add(cell);
+                gameField[i][j] = cell;
             }
         }
     }
+
+    private void makeTurn(char symbol, JLabel cell) {
+        cell.setText(String.valueOf(symbol));
+        cell.setEnabled(false);
+    }
+
+    private boolean checkEndGameState(char symbol, String playerName) {
+        if (isWin(symbol)) {
+            setEndGameState(String.format("%s победил!", playerName));
+            return true;
+        }
+        else if (isMapFull()) {
+            setEndGameState("Ничья!");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void setEndGameState(String messageState) {
+        setEnabledGameField(false);
+        gameStateLabel.setText(messageState);
+    }
+
+    private void startGame() {
+        setEnabledGameField(true);
+        gameStateLabel.setText(START_GAME_MSG);
+        initMap();
+        refreshGameField();
+    }
+
+    private void refreshGameField() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                gameField[i][j].setText(String.valueOf(TicTacToeVisual.map[i][j]));
+            }
+        }
+    }
+
+    private void setEnabledGameField(boolean enabled) {
+        gamePanel.setEnabled(true);
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                gameField[i][j].setEnabled(enabled);
+            }
+        }
+    }
+
+
 
     private static int[] getNextCellToWin(char symbol) {
         for (int rowIndex = 0; rowIndex < map.length; rowIndex++) {
@@ -62,11 +169,11 @@ public class TicTacToeVisual {
         return result;
     }
 
-    private static void setCell(int rowIndex, int colIndex, char symbol) {
+    public static void setCell(int rowIndex, int colIndex, char symbol) {
         map[rowIndex][colIndex] = symbol;
     }
 
-    private static boolean isMapFull() {
+    public static boolean isMapFull() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (map[i][j] == DOT_EMPTY) {
@@ -79,7 +186,7 @@ public class TicTacToeVisual {
         return true;
     }
 
-    private static boolean isWin(char symbol) {
+    public static boolean isWin(char symbol) {
         if (checkRowsAndCols(symbol)) {
             return true;
         } else {
@@ -114,21 +221,10 @@ public class TicTacToeVisual {
             }
 
         }
-//        if (map[0][0] == symbol && map[0][1] == symbol && map[0][2] == symbol) return true; // проверка в строке
-//        if (map[1][0] == symbol && map[1][1] == symbol && map[1][2] == symbol) return true;
-//        if (map[2][0] == symbol && map[2][1] == symbol && map[2][2] == symbol) return true;
-//
-//        if (map[0][0] == symbol && map[1][0] == symbol && map[2][0] == symbol) return true; // проверка в колонке
-//        if (map[0][1] == symbol && map[1][1] == symbol && map[2][1] == symbol) return true;
-//        if (map[0][2] == symbol && map[1][2] == symbol && map[2][2] == symbol) return true;
-//
-//        if (map[0][0] == symbol && map[1][1] == symbol && map[2][2] == symbol) return true; // проверка по диагонали
-//        if (map[2][0] == symbol && map[1][1] == symbol && map[0][2] == symbol) return true;
-//
         return false;
     }
 
-    private static void computerTern() {
+    public static int[] computerTurn() {
         int[] cell = getNextCellToWin(DOT_O);
         if(cell == null) {
             cell = getNextCellToWin(DOT_X);
@@ -140,16 +236,7 @@ public class TicTacToeVisual {
         int colIndex = cell[1];
 
         setCell(rowIndex, colIndex, DOT_O);
-//        int x;
-//        int y;
-//        Random random = new Random();
-//
-//        do {
-//            x = random.nextInt(SIZE);
-//            y = random.nextInt(SIZE);
-//        } while (map[x][y] != DOT_EMPTY);
-//
-//        map[x][y] = DOT_O;
+        return cell;
     }
 
     private static int[] getRandomEmptyCell() {
@@ -165,58 +252,7 @@ public class TicTacToeVisual {
         return new int[] {x, y};
     }
 
-    private static void humanTurn() {
-        int x;
-        int y;
-        Scanner scanner = new Scanner(System.in);
-        do {
-            System.out.println("Введите координаты в формате X Y");
-            x = readInt(scanner) -1;
-            y = readInt(scanner) -1;
-
-            if(x == -1 || y == -1) {
-                System.out.println("Координаты должны быть числом!");
-                scanner.nextLine();
-            } else if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
-                System.out.println("Данные введены не корректно!");
-                scanner.nextLine();
-            } else if (map[x][y] != DOT_EMPTY) {
-                System.out.println("Клетка уже занята!");
-            } else {
-                break;
-            }
-        } while (true);
-
-        map[x][y] = DOT_X;
-    }
-
-    private static int readInt(Scanner scanner) {
-        return scanner.hasNextInt() ? scanner.nextInt() : -1;
-//        if (scanner.hasNextInt()) {
-//            return scanner.nextInt();
-//        } else {
-//            return -1;
-//        }
-    }
-
-
-
-    private static void printMap() {
-        for (int i = 0; i <= SIZE; i++) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-        for (int i = 0; i < SIZE; i++) {
-            System.out.print((i + 1) + " ");
-            for (int j = 0; j < SIZE; j++) {
-                System.out.print(map[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    private static void initMap() {
+    public static void initMap() {
         map = new char[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -224,4 +260,22 @@ public class TicTacToeVisual {
             }
         }
     }
+    public static void main(String[] args) {
+        TicTacToeVisual ticTacToeVisual = new TicTacToeVisual();
+        ticTacToeVisual.startGame();
+
+        initMap();
+        while (true) {
+            if (isWin(DOT_X)) {
+                break;
+            }
+            if (isMapFull()) {
+                break;
+            }
+            if (isWin(DOT_O)) {
+                break;
+            }
+        }
+    }
 }
+
