@@ -12,11 +12,17 @@ public class ButtonDrawExample {
         private static final String DRAW_O = "DRAW_O";
 
         public MyWindow() {
-            setSize(600, 375);
+            setSize(319, 341);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
 
-            setLayout(new GridLayout(1, 3));
+            setLayout(new GridLayout(3, 3));
+            add(createButton());
+            add(createButton());
+            add(createButton());
+            add(createButton());
+            add(createButton());
+            add(createButton());
             add(createButton());
             add(createButton());
             add(createButton());
@@ -44,13 +50,13 @@ public class ButtonDrawExample {
                     super.paint(graphics);
 
                     if (getActionCommand().equals(DRAW_O)) {
-                        graphics.drawOval(0, this.getHeight() / 4, getWidth(), getWidth());
+                        graphics.drawOval(0, this.getHeight() / 100, getWidth() / 2, getWidth() / 2);
                         graphics.setColor(Color.RED);
-                        graphics.fillOval(0, this.getHeight() / 4, getWidth(), getWidth());
+                        graphics.fillOval(0, this.getHeight() / 100, getWidth() / 2, getWidth() / 2);
                     } else {
                         Graphics2D g2d = (Graphics2D) graphics;
                         g2d.setStroke(new BasicStroke(10)); // setStroke задает ширину для линии которую рисуем
-                        g2d.setColor(Color.BLUE);
+                        g2d.setColor(Color.YELLOW);
                         g2d.drawLine(0, 0, this.getWidth(), this.getHeight());
                         g2d.drawLine(this.getWidth(), 0, 0, this.getHeight());
                     }

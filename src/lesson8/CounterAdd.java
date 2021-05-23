@@ -50,6 +50,7 @@ public class CounterAdd extends JFrame {
         field.addFocusListener(new FocusListener() { // слушатель проверяет сделана ли запись в текстовом поле, по умолчанию задает пустое поле
             @Override
             public void focusGained(FocusEvent e) {
+
                 field.setText("");
             }
 
@@ -103,6 +104,7 @@ public class CounterAdd extends JFrame {
     }
 
     private void refreshCounterLabel(JLabel counterValueView) {
+
         counterValueView.setText(String.valueOf(value));
     }
 

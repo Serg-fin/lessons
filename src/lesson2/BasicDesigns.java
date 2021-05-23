@@ -1,7 +1,5 @@
 package lesson2;
 
-import static java.lang.System.*;
-
 public class BasicDesigns {
 
     public static void main(String[] args) {
@@ -10,9 +8,10 @@ public class BasicDesigns {
         comparingNum(4);
         counter("Java it's cool!!!", 5);
     }
+
     public static boolean within10and20(int a, int b) {
         int sum = a + b;
-        if (sum >= 10 && sum<= 20) {
+        if (sum >= 10 && sum <= 20) {
             System.out.println(sum + " true");
             return true;
         } else {
@@ -20,6 +19,7 @@ public class BasicDesigns {
             return false;
         }
     }
+
     public static int comparingNumbers(int a) {
         if (a >= 0) {
             System.out.println("Передано положительное число: " + a);
@@ -29,6 +29,7 @@ public class BasicDesigns {
             return a;
         }
     }
+
     public static boolean comparingNum(int a) {
         if (a >= 0) {
             return false;
@@ -36,12 +37,12 @@ public class BasicDesigns {
             return true;
         }
     }
+
     public static void counter(String someText, int a) {
         for (int b = 0; b < a; b++) {
             System.out.println(someText);
         }
     }
-
 }
 
 
