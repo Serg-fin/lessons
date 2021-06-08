@@ -13,7 +13,7 @@ public class Homework {
         measureTime(() -> sequentialMethod(data1), "sequentialMethod");
 
         float[] data2 = createArray(SIZE);
-        measureTime(() -> parallellMethod(data1), "parallellMethod");
+        measureTime(() -> parallelMethod(data1), "parallelMethod");
 
         System.out.println("Arrays are equal: " + Arrays.equals(data1, data2));
     }
@@ -28,8 +28,8 @@ public class Homework {
             data[index] = computeValue(index + offset, currentValue);
         }
     }
-    
-    private static void parallellMethod(float[] data) {
+
+    private static void parallelMethod(float[] data) {
         float[] part1 = Arrays.copyOfRange(data, 0, HALF_SIZE);
         float[] part2 = Arrays.copyOfRange(data, HALF_SIZE, data.length);
 
