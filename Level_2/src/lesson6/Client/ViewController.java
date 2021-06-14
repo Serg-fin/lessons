@@ -1,5 +1,6 @@
 package lesson6.Client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,11 +12,9 @@ import javafx.scene.input.KeyEvent;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.function.Consumer;
 
 
 public class ViewController {
-    @FXML
     public ListView<String> usersList; // список клиентов
     @FXML
     private Button sendButton;
@@ -35,7 +34,11 @@ public class ViewController {
 
     @FXML
     private void sendMessage() {
-        String message = messageTextArea.getText();
+        String message = messageTextArea.getText().trim();
+        if (message.isEmpty()) {
+            messageTextArea.clear();
+            return;
+        }
 
         String sender = null;
         if (!usersList.getSelectionModel().isEmpty()) {
@@ -43,11 +46,12 @@ public class ViewController {
         }
 
         try {
+            message = sender != null ? String.join(": ", sender, message) : message;
             network.sendMessage(message);
         } catch (IOException e) {
             application.showNetworkErrorDialog("Ошибка передачи данных по сети", "Не удалось отправить сообщение!");
         }
-        appendMessageToChat(sender, message);
+        appendMessageToChat("Я", message);
 
     }
 
@@ -55,11 +59,11 @@ public class ViewController {
         chatHistory.appendText(DateFormat.getDateTimeInstance().format(new Date()));
         chatHistory.appendText(System.lineSeparator());
         if (sender != null) {
-            String selectedUser = usersList.getSelectionModel().getSelectedItem();
-            chatHistory.appendText(selectedUser + ":");
+            chatHistory.appendText(sender + ":");
             chatHistory.appendText(System.lineSeparator());
         }
         chatHistory.appendText(message);
+        chatHistory.appendText(System.lineSeparator());
         chatHistory.appendText(System.lineSeparator());
         messageTextArea.clear();
     }
@@ -67,7 +71,7 @@ public class ViewController {
     @FXML
     public void sendTextAreaMessage(KeyEvent event) { // определили логику работы клавиши ENTER
         if (event.getCode() == KeyCode.ENTER) {
-            event.consume(); //
+            event.consume(); // otherwise a new line will be added to the textArea after the sendFunction() call
             if (event.isShiftDown()) {
                 messageTextArea.appendText(System.lineSeparator());
             } else {
@@ -78,17 +82,13 @@ public class ViewController {
 
     public void setNetwork(Network network) {
         this.network = network;
-
+        network.waitMessages(message -> Platform.runLater(() -> {
+            ViewController.this.appendMessageToChat("Server", message);
+        }));
     }
 
     public void setApplication(ClientChat application) {
-        this.application = application;
-        network.waitMessages(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                appendMessageToChat();
-            }
-        });
+      this.application = application;
     }
 }
 

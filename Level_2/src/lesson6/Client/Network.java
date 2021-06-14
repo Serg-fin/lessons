@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-public class Network {
+public class Network { // в этом классе описана логика сетевого взаимодействия
 
     private static final int SERVER_PORT = 8189;
     private static final String SERVER_HOST = "localhost";
@@ -18,15 +18,16 @@ public class Network {
     private DataOutputStream socketOutput;
 
     public Network(String host, int port) {
-        this.host = host;
-        this.port = port;
+       this.host = host; // используем localhost , т.е. всё крутится на одном компьютере
+//     this.host = "192.168.1.105"; // пример явного указания ip адреса
+       this.port = port;
     }
 
     public Network() {
         this(SERVER_HOST, SERVER_PORT);
     }
 
-    public boolean connect() {
+    public boolean connect() { // данный метод занимается установкой сетевого соединения
         try {
             socket = new Socket(host, port);
             socketInput = new DataInputStream(socket.getInputStream());    // используем для чтения   данных по сетевому соединению
@@ -55,7 +56,6 @@ public class Network {
                     String message = socketInput.readUTF();
                     messageHandler.accept(message);
                 } catch (IOException e) {
-                    e.printStackTrace();
                     System.err.println("Failed to read message from server");
                     break;
                 }

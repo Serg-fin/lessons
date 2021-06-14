@@ -15,16 +15,18 @@ public class ClientChat extends Application {
 
     private static final String NETWORK_ERROR_TITLE = "Сетевая ошибка";
     private static final String NETWORK_ERROR_CONNECTION_TYPE = "Невозможно установить сетевое соединение";
+    private Stage primaryStage; //*****
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        this.primaryStage = primaryStage; //*****
+
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("view.fxml"));
 
         Parent root = fxmlLoader.load();
-
-        primaryStage.setTitle("Мой чат");
-        primaryStage.setScene(new Scene(root));
+        this.primaryStage.setTitle("Мой чат");
+        this.primaryStage.setScene(new Scene(root));
 
         ViewController controller = fxmlLoader.getController();
 //        controller.usersList.getItems().addAll("user1", "user2");
@@ -47,6 +49,8 @@ public class ClientChat extends Application {
 
         viewController.setNetwork(network);
         viewController.setApplication(this);
+
+        primaryStage.setOnCloseRequest(windowEvent -> network.close());
 
 //
 //
