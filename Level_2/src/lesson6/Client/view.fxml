@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane alignment="center" hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lesson6.Client.ViewController">
+   <children>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
+         <top>
+            <Label text="Чат" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0">
+                     <children>
+                        <TextArea fx:id="chatHistory" editable="false" layoutX="131.0" prefHeight="321.0" prefWidth="467.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="131.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="usersList" layoutY="20.0" prefHeight="301.0" prefWidth="131.0" />
+                        <Label layoutX="46.0" text="Юзеры" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="94.0" prefWidth="598.0">
+                     <children>
+                        <HBox layoutX="-2.0" layoutY="135.0" maxHeight="50.0" prefHeight="50.0" prefWidth="600.0" style="-fx-border-color: #ff4500; -fx-border-width: 2px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <TextArea fx:id="messageTextArea" maxHeight="50.0" onKeyPressed="#sendTextAreaMessage" prefHeight="50.0" prefWidth="524.0" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendMessage" prefHeight="60.0" prefWidth="70.0" text="Отправить" textFill="#3d0ee8">
+                                 <font>
+                                    <Font name="Calibri" size="12.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>
